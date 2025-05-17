@@ -56,5 +56,4 @@ public class KeycloakJwtAuthenticationConverter implements org.springframework.c
    */
 
 
-
 }
