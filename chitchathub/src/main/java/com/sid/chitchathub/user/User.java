@@ -48,7 +48,6 @@ public class User extends BaseAuditingEntity {
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chat> chatAsReceiver;
 
-
     //“This user was active within the last 5 minutes.”
     public boolean isUserOnline() {
         return lastSeen != null && lastSeen.isAfter(LocalDateTime.now().minusMinutes(5));
