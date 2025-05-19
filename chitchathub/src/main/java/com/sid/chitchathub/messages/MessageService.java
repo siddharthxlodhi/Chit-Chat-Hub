@@ -2,7 +2,11 @@ package com.sid.chitchathub.messages;
 
 import com.sid.chitchathub.chat.Chat;
 import com.sid.chitchathub.chat.ChatRepository;
-import com.sid.chitchathub.file.FileService;
+import com.sid.chitchathub.file.FileStorageService;
+import com.sid.chitchathub.file.FileUtils;
+import com.sid.chitchathub.notification.Notification;
+import com.sid.chitchathub.notification.NotificationService;
+import com.sid.chitchathub.notification.NotificationType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -23,7 +27,8 @@ public class MessageService {
     private final MessageMapper mapper;
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
-    private final FileService fileService;
+    private final FileStorageService fileService;
+    private final NotificationService notificationService;
 
     public void saveMessage(MessageRequest messageRequest) {
         Chat chat = chatRepository.findById(messageRequest.getChatId())
@@ -36,7 +41,20 @@ public class MessageService {
                 .type(messageRequest.getType())
                 .state(SENT).build();
         messageRepository.save(message);
-        //todo Notification send
+
+        //Sending notification
+
+        Notification notification = Notification.builder()
+                .chatId(chat.getId())
+                .messageType(messageRequest.getType())
+                .content(message.getContent())
+                .senderId(message.getSenderID())
+                .receiverId(messageRequest.getReceiverId())
+                .type(NotificationType.MESSAGE)
+                .chatName(chat.getChatName(message.getSenderID()))
+                .build();
+
+        notificationService.sendNotification(message.getReceiverID(), notification);
     }
 
     //This will return all the messages of a particular chat
@@ -46,7 +64,7 @@ public class MessageService {
     }
 
 
-    //This will make all the messages to seen and notify other user
+    //This will make all the messages to seen by chat id and find recipientId  notify it
     @Transactional
     public void setMessagesToSeen(String chatId, Authentication authentication) {
         Chat chat = chatRepository.findById(chatId)
@@ -56,10 +74,19 @@ public class MessageService {
 
         messageRepository.setAllMessageToSeenByChatId(chatId, SEEN);
 
-        //todo notification
+        //Sending notification
 
+        Notification notification = Notification.builder()
+                .chatId(chat.getId())
+                .senderId(authentication.getName())
+                .receiverId(recipientId)
+                .type(NotificationType.SEEN)
+                .build();
+
+        notificationService.sendNotification(recipientId, notification);
     }
 
+    //getting geRecipientId based on connected user
     private String geRecipientId(Chat chat, Authentication authentication) {
         if (chat.getSender().getId().equals(authentication.getName())) {
             return chat.getReceiver().getId();
@@ -67,6 +94,7 @@ public class MessageService {
         return chat.getSender().getId();
 
     }
+
 
     public void uploadMediaMessage(String chatId, MultipartFile file, Authentication authentication) {
         Chat chat = chatRepository.findById(chatId)
@@ -86,7 +114,20 @@ public class MessageService {
                 .build();
         messageRepository.save(message);
 
-        //todo notification
+        //Sending notification
+
+        Notification notification = Notification.builder()
+                .chatId(chat.getId())
+                .messageType(IMAGE)
+                .senderId(senderId)
+                .receiverId(recipientId)
+                .type(NotificationType.IMAGE)
+                .media(FileUtils.readFileFromLocation(filePath))
+                .build();
+
+        notificationService.sendNotification(recipientId, notification);
+
+
     }
 
 

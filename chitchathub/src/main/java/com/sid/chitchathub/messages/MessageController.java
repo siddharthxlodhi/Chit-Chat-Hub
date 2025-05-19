@@ -15,7 +15,6 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
-    private final MessageRepository messageRepository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

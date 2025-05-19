@@ -32,7 +32,7 @@ import static com.sid.chitchathub.chat.ChatConstant.FIND_CHAT_BY_SENDER_ID_AND_R
         query = "SELECT c FROM Chat c where c.sender.id=: senderId OR c.receiver.id=:senderId ORDER BY createdDate DESC "  //TO DISPLAY ALL LATEST CHATS
 )
 @NamedQuery(
-        name = FIND_CHAT_BY_SENDER_ID_AND_RECEIVER_ID,   //All the chats
+        name = FIND_CHAT_BY_SENDER_ID_AND_RECEIVER_ID,   //
         query = "SELECT c FROM Chat c where (c.sender.id=:senderId AND c.receiver=:receiverId)"
 )
 

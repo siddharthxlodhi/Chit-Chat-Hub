@@ -13,6 +13,7 @@ public class UserService {
     private final UserMapper userMapper;
 
 
+    //Getting all users except self
     public List<UserResponse> getAllUsersExceptSelf(Authentication authentication) {
         return userRepository.findAllUsersExceptSelf(authentication.getName())
                 .stream()
