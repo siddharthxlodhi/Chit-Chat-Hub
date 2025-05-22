@@ -1,6 +1,7 @@
 package com.sid.chitchathub.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,7 +15,7 @@ import java.util.Collections;
 
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
+@Configuration
 public class SecurityConfig {
 
     @Bean
@@ -34,7 +35,8 @@ public class SecurityConfig {
                                         "/swagger-ui/**",
                                         "/webjars/**",
                                         "/swagger-ui.html",
-                                        "/ws/**")
+                                        "/ws/**",
+                                        "/free/**")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )

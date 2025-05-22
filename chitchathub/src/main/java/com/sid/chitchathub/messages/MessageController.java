@@ -1,5 +1,6 @@
 package com.sid.chitchathub.messages;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+@Tag(name = "Message")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/messages")
@@ -25,7 +26,6 @@ public class MessageController {
     @PostMapping(value = "/upload-media", consumes = "multipart/form-data")
     @ResponseStatus(HttpStatus.CREATED)
     public void uploadMedia(@RequestParam("chat-id") String chatid,
-                            //TODO @Parameter from swagger
                             @RequestParam("file") MultipartFile file,
                             Authentication authentication
     ) {
