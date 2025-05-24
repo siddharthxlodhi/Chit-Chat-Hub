@@ -16,11 +16,10 @@ public class ChatResponse {
     private String id;
     private String name;
     private long unreadCount;
-    private String LastMessage;
     private String lastMessage;
     private LocalDateTime lastMessageTime;
     private boolean isRecipientOnline;
     private String senderId;
     private String receiverId;
-
+private LocalDateTime createdDate;
 }

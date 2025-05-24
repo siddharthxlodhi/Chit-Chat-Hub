@@ -19,7 +19,7 @@ public class NotificationService {
     public void sendNotification(String receiverId, Notification notification) {
         log.info("Sending notification to {} ", receiverId);
         simpMessagingTemplate.convertAndSendToUser(
-                receiverId, "notification", notification
+                receiverId, "/notification", notification
         );
 
     }

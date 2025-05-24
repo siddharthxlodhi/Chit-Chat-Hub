@@ -33,7 +33,7 @@ import static com.sid.chitchathub.chat.ChatConstant.FIND_CHAT_BY_SENDER_ID_AND_R
 )
 @NamedQuery(
         name = FIND_CHAT_BY_SENDER_ID_AND_RECEIVER_ID,   //
-        query = "SELECT c FROM Chat c where (c.sender.id=:senderId AND c.receiver=:receiverId)"
+        query = "SELECT c FROM Chat c where (c.sender.id=:senderId AND c.receiver.id=:receiverId)"
 )
 
 public class Chat extends BaseAuditingEntity {
@@ -74,7 +74,7 @@ public class Chat extends BaseAuditingEntity {
             if (messages.get(0).getType() != MessageType.TEXT) {
                 return "Attachment";
             } else {
-                return messages.get(messages.size() - 1).getContent();
+                return messages.get(0).getContent();
             }
         }
         return null;

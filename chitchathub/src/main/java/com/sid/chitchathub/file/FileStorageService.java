@@ -24,27 +24,34 @@ public class FileStorageService {
     private String mediaOutputPath;
 
     public String saveFile(@NonNull String senderId, @NonNull MultipartFile file) {
-        final String fileUploadPath = mediaOutputPath + separator + "users" + separator + senderId;   // -> /upload/users/senderId
-        File targetFolder = new File(fileUploadPath);
+        // Build the folder path using Paths.get to join safely
+        Path targetFolderPath = Paths.get(mediaOutputPath, "users", senderId);
 
-        if (!targetFolder.exists()) {   //checking if the folder already exists with the given path,if not
-            boolean folderCreated = targetFolder.mkdir();  //creating if not exist
-            if (!folderCreated) {
-                log.warn("Failed to create the target folder: {}", targetFolder);  //if unable to create
-                return null;
-            }
-        }
-        final String fileExtension = getFileExtension(file.getOriginalFilename());   //getting the original files extension
-        final String targetFilePath = targetFolder + separator + currentTimeMillis() + "." + fileExtension;  // -> /upload/users/senderId/(currentTimeMillis+ . +fileExtension)
-        Path targetpath = Paths.get(targetFilePath); //Getting the target  final path
+        // Create directories if not exist
         try {
-            Files.write(targetpath, file.getBytes());  //uploading on that path
-            log.info("File saved to: {}", targetFilePath);
-            return targetFilePath;  //returning Files uploaded path
+            Files.createDirectories(targetFolderPath);
+        } catch (IOException e) {
+            log.warn("Failed to create target folder: {}", targetFolderPath, e);
+            return null;
+        }
+
+        // Get file extension safely (handle null original filename)
+        String originalFilename = file.getOriginalFilename();
+        String fileExtension = getFileExtension(originalFilename != null ? originalFilename : "");
+
+        // Build the full target file path
+        String filename = System.currentTimeMillis() + "." + fileExtension;
+        Path targetFilePath = targetFolderPath.resolve(filename);
+
+        try {
+            // Write file bytes to the target path
+            Files.write(targetFilePath, file.getBytes());
+            log.info("File saved to: {}", targetFilePath.toAbsolutePath());
+            return targetFilePath.toString();
         } catch (IOException e) {
             log.error("File was not saved", e);
+            return null;
         }
-        return null;
     }
 
 

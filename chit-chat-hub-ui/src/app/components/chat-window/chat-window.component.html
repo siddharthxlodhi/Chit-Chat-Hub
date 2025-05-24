@@ -1,0 +1,140 @@
+<div class="chat-header-left flex items-center justify-between w-full px-4 py-2 bg-white shadow-sm">
+  <!-- Left side: existing user icon and chat title -->
+  <div class="flex items-center space-x-2">
+    <i class="fas fa-user text-gray-700"></i> <!-- FontAwesome user icon -->
+    <div class="chat-title-section">
+      <p class="chat-title font-semibold text-lg">{{ chat.name }}</p>
+      <ng-container *ngIf="chat.recipientOnline; else offline">
+        <div class="online-status-wrapper flex items-center space-x-1">
+          <span class="online-dot w-2 h-2 rounded-full bg-green-500"></span>
+          <small class="online-text text-gray-900 font-sans">Online</small>
+        </div>
+      </ng-container>
+      <ng-template #offline>
+        <div class="offline-status-wrapper flex items-center space-x-1">
+          <span class="offline-dot w-2 h-2 rounded-full bg-gray-400"></span>
+          <small class="offline-text text-gray-900 font-sans">Offline</small>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Right side: logo + text -->
+  <div class="flex items-center space-x-3">
+    <div class="logo-wrapper">
+      <img src="logo1.png" alt="Logo" class="logo-image" />
+      <span class="embedded-text">CHIT CHAT HUB</span>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+
+<!-- Chat body -->
+<!-- Chat body -->
+<!-- Chat body -->
+<div class="chat-body">
+  <div class="chat-scroll">
+    <div class="chat-date">
+      {{ chat.createdDate | date: 'dd MMM y, HH:mm' }}
+    </div>
+
+    @for (message of chatMessages; track message) {
+      @if (selfMessage(message)) {
+        <div class="chat-message-out">
+          @if (message.type === 'TEXT') {
+            <p >{{ message.content }}</p>
+          } @else if (message.media && message.media.length > 0) {
+            <img
+              width="240"
+              class="cursor-pointer rounded shadow"
+              [src]="'data:image/jpg;base64,' + message.media"
+              alt="Image"
+            />
+
+          }
+
+
+          <div class="message-meta">
+            <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
+
+            @if (message.state === 'SENT') {
+              <span class="icon-wrapper">
+                <i class="fas fa-check"></i>
+              </span>
+            } @else {
+              <span class="icon-wrapper">
+                <i class="fas fa-check seen"></i>
+                <i class="fas fa-check seen ml-neg"></i>
+              </span>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="chat-message-in">
+          <p class="sender-name">{{ chat.name }}</p>
+
+          @if (message.type === 'TEXT') {
+            <p>{{ message.content }}</p>
+          } @else if (message.media && message.media.length > 0) {
+            <img
+              width="240"
+              class="cursor-pointer rounded shadow"
+              [src]="'data:image/jpg;base64,' + message.media"
+              alt="Image"
+            />
+
+          }
+
+
+          <div class="message-meta">
+            <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
+          </div>
+        </div>
+      }
+    }
+    <div #scrollAnchor></div>
+  </div>
+</div>
+
+
+<!-- Input -->
+<div class="chat-input">
+
+  <!-- Paperclip Icon for File Upload -->
+  <label for="fileUpload" style="cursor: pointer; margin-right: 10px;">
+    <i class="fas fa-paperclip"></i>
+  </label>
+
+  <!-- Hidden File Input -->
+  <input
+    type="file"
+    id="fileUpload"
+    hidden
+    accept=".jpg, .jpeg, .png, .svg, .mp3"
+    (change)="uploadMedia($event.target)"
+  />
+  <i class="fa-regular fa-face-smile cursor-pointer" (click)="showEmoji=!showEmoji"></i>
+  @if (showEmoji) {
+    <emoji-mart
+      [set]="'google'"
+      title="Pick your emoji.."
+      class="emojis-panel"
+      (emojiClick)="onSelectEmojis($event)"
+    ></emoji-mart>
+  }
+  <input
+    [(ngModel)]="messageContent"
+    (keydown)="KeyDown($event)"
+    (click)="onClick()"
+    class="chat-input-field" type="text" placeholder="Type a message...">
+
+  @if (messageContent) {
+    <i class="fas fa-paper-plane cursor-pointer" (click)="sendMessage()"></i>
+  }
+
+</div>
+

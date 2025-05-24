@@ -1,0 +1,98 @@
+import {ChatResponse} from "../../services/models/chat-response";
+import {Component, input, InputSignal, OnInit, output} from "@angular/core";
+import {DatePipe, NgClass, NgForOf, UpperCasePipe} from "@angular/common";
+import {UserResponse} from "../../services/models/user-response";
+import {UserService} from "../../services/services/user.service";
+import {KeycloakService} from "../../utils/keycloak/keycloak.service";
+import {ChatService} from "../../services/services/chat.service";
+
+@Component({
+  selector: 'app-chat-list',
+  standalone: true,
+  imports: [
+    NgForOf,
+    DatePipe,
+    UpperCasePipe,
+    NgClass
+  ],
+  templateUrl: './chat-list.component.html',
+  styleUrl: './chat-list.component.scss'
+})
+export class ChatListComponent implements OnInit{
+
+  loginUser:string|undefined;
+
+  chats: InputSignal<ChatResponse[]> = input<ChatResponse[]>([]);
+  searchNewContact = false;
+  contacts: Array<UserResponse> = [];
+  chatSelected = output<ChatResponse>();
+
+  constructor(
+    private userService: UserService,
+    private keycloakService: KeycloakService,
+    private chatService: ChatService
+  ) {
+
+
+  }
+
+
+  searchContact() {
+    this.userService.getAllUsers().subscribe({
+      next: (res) => {
+        this.contacts = res;
+        this.searchNewContact = true;
+      }
+    })
+  }
+
+
+  chatClicked(chat: ChatResponse) {
+    this.chatSelected.emit(chat);
+  }
+
+  wrapMessage(lastMessage: string | undefined): string {
+    if (lastMessage && lastMessage.length <= 20) {
+      return lastMessage;
+
+    }
+    return lastMessage?.substring(0, 17) + '...';
+  }
+
+
+  contactClicked(contact: UserResponse) {
+    this.chatService.createChat({
+      'sender-id': this.keycloakService.userId as string,
+      'receiver-id': contact.id as string
+    }).subscribe({
+      next: (res) => {
+        const chat: ChatResponse = {
+          id: res.response,  //id of new chat
+          name: contact.firstName + ' ' + contact.lastName,
+          recipientOnline: contact.online,
+          senderId: this.keycloakService.userId,
+          receiverId: contact.id,
+          createdDate: new Date().toString()
+        };
+        this.chats().unshift(chat);
+        this.searchNewContact = false;
+        this.chatSelected.emit(chat);
+      }
+    });
+
+  }
+
+  logout() {
+    this.keycloakService.logout();
+  }
+
+  userProfile() {
+    this.keycloakService.accountManagement();
+  }
+
+  protected readonly moveBy = moveBy;
+
+  ngOnInit(): void {
+    this.loginUser=this.keycloakService.fullName;
+  }
+}

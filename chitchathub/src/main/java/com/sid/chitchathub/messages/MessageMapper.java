@@ -18,6 +18,8 @@ public class MessageMapper {
                 .type(message.getType())
                 .state(message.getState())
                 .createdAt(message.getCreatedDate())
+                .senderId(message.getSenderID())
+                .receiverId(message.getReceiverID())
                 .media(FileUtils.readFileFromLocation(message.getMediaFilePath()))  //if media type is TEXT it will contain byte[0]
                 .build();
     }

@@ -9,6 +9,7 @@ import com.sid.chitchathub.notification.NotificationService;
 import com.sid.chitchathub.notification.NotificationType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import static com.sid.chitchathub.messages.MessageState.SEEN;
 import static com.sid.chitchathub.messages.MessageState.SENT;
 import static com.sid.chitchathub.messages.MessageType.IMAGE;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MessageService {
@@ -51,7 +53,7 @@ public class MessageService {
                 .senderId(message.getSenderID())
                 .receiverId(messageRequest.getReceiverId())
                 .type(NotificationType.MESSAGE)
-                .chatName(chat.getChatName(message.getSenderID()))
+                .chatName(chat.getChatName(message.getReceiverID()))
                 .build();
 
         notificationService.sendNotification(message.getReceiverID(), notification);
@@ -73,7 +75,7 @@ public class MessageService {
         final String recipientId = geRecipientId(chat, authentication);
 
         messageRepository.setAllMessageToSeenByChatId(chatId, SEEN);
-
+        log.info("Set messages to seen");
         //Sending notification
 
         Notification notification = Notification.builder()
@@ -95,7 +97,7 @@ public class MessageService {
 
     }
 
-
+    @Transactional
     public void uploadMediaMessage(String chatId, MultipartFile file, Authentication authentication) {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Chat not found"));

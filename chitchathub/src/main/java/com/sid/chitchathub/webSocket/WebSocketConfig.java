@@ -26,7 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("localhost:4200")  //Allowed regions
+                .setAllowedOrigins("http://localhost:4200")  //Allowed regions
                 .withSockJS();  //over sock js
     }
 
@@ -34,7 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("app");   //when the client(frontend) send at app/**, Tells Spring to route /app/** messages to @MessageMapping methods.
         registry.enableSimpleBroker("/user");  //Enables routing via the in-memory broker (you don’t subscribe to /user directly).
-        registry.setUserDestinationPrefix("users");            //Lets you subscribe to /user/** on frontend and send with convertAndSendToUser()
+        registry.setUserDestinationPrefix("/user");            //Lets you subscribe to /user/** on frontend and send with convertAndSendToUser()
     }
 
 

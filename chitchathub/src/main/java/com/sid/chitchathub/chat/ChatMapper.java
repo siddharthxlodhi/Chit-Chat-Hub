@@ -13,6 +13,7 @@ public class ChatMapper {
                 .lastMessageTime(chat.getlastMessageTime())
                 .isRecipientOnline(chat.isRecipientOnline(currentUserId))
                 .senderId(chat.getSender().getId())
+                .createdDate(chat.getCreatedDate())
                 .receiverId(chat.getReceiver().getId()).build();
     }
 }

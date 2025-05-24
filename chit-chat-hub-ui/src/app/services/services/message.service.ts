@@ -11,8 +11,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { getMessaged } from '../fn/message/get-messaged';
-import { GetMessaged$Params } from '../fn/message/get-messaged';
+import { getMessages } from '../fn/message/get-messages';
+import { GetMessages$Params } from '../fn/message/get-messages';
 import { MessageResponse } from '../models/message-response';
 import { savemessage } from '../fn/message/savemessage';
 import { Savemessage$Params } from '../fn/message/savemessage';
@@ -76,6 +76,7 @@ export class MessageService extends BaseService {
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
+  
 
   /** Path part for operation `uploadMedia()` */
   static readonly UploadMediaPath = '/api/v1/messages/upload-media';
@@ -102,27 +103,27 @@ export class MessageService extends BaseService {
     );
   }
 
-  /** Path part for operation `getMessaged()` */
-  static readonly GetMessagedPath = '/api/v1/messages/chat/{chat-id}';
+  /** Path part for operation `getMessages()` */
+  static readonly GetMessagesPath = '/api/v1/messages/chat/{chat-id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getMessaged()` instead.
+   * To access only the response body, use `getMessages()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getMessaged$Response(params: GetMessaged$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<MessageResponse>>> {
-    return getMessaged(this.http, this.rootUrl, params, context);
+  getMessages$Response(params: GetMessages$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<MessageResponse>>> {
+    return getMessages(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getMessaged$Response()` instead.
+   * To access the full response (for headers, for example), `getMessages$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getMessaged(params: GetMessaged$Params, context?: HttpContext): Observable<Array<MessageResponse>> {
-    return this.getMessaged$Response(params, context).pipe(
+  getMessages(params: GetMessages$Params, context?: HttpContext): Observable<Array<MessageResponse>> {
+    return this.getMessages$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<MessageResponse>>): Array<MessageResponse> => r.body)
     );
   }

@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import static com.sid.chitchathub.messages.MessageConstant.FIND_MESSAEGES_BY_CHAT_ID;
+import static com.sid.chitchathub.messages.MessageConstant.SET_MESSAGE_TO_SEEN_BY_CHAT;
 
 
 @Setter
@@ -25,8 +26,8 @@ import static com.sid.chitchathub.messages.MessageConstant.FIND_MESSAEGES_BY_CHA
         query = "SELECT m FROM Message m WHERE m.chat.id= :chatId ORDER BY m.createdDate "
 )
 @NamedQuery(
-        name = MessageConstant.SET_MESSAGE_TO_SEEN_BY_CHAT,
-        query = "UPDATE Message SET state=:newState WHERE chat.id= :chatId "
+        name = SET_MESSAGE_TO_SEEN_BY_CHAT,
+        query = "UPDATE Message SET state = :newState WHERE chat.id = :chatId"
 )
 
 public class Message extends BaseAuditingEntity {

@@ -222,7 +222,7 @@
         "tags": [
           "Message"
         ],
-        "operationId": "getMessaged",
+        "operationId": "getMessages",
 
         "parameters": [
 
@@ -416,6 +416,14 @@
           "media": {
             "type": "string",
             "format": "byte"
+          },
+
+          "senderId": {
+            "type": "string"
+          },
+
+          "receiverId": {
+            "type": "string"
           }
         }
       },
@@ -453,6 +461,11 @@
 
           "receiverId": {
             "type": "string"
+          },
+
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
           },
 
           "recipientOnline": {

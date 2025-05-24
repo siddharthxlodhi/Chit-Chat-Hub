@@ -1,0 +1,111 @@
+<div class="w-full h-full flex flex-col">
+
+  <!-- Header -->
+  <div class="header">
+    <!-- User dropdown button -->
+    <div class="dropdown dropup">
+      <button
+        class="btn-icon"
+        id="userDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        aria-haspopup="true"
+        aria-label="User menu"
+      >
+        <i class="fa-solid fa-user"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li><a class="dropdown-item" (click)="userProfile()">Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- Logged-in user name -->
+    <span class="logged-in-user">{{ loginUser }}</span>
+
+    <!-- Toggle Chats/Contacts -->
+    <div class="flex space-x-4">
+      <button
+        class="icon-button"
+        (click)="searchNewContact ? searchNewContact = false : searchContact()"
+        [title]="searchNewContact ? 'Show Chats' : 'Show Contacts'"
+      >
+        <i
+          class="fa-solid"
+          [ngClass]="searchNewContact ? 'fa-comments' : 'fa-address-book'"
+        ></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search">
+    <input type="text" placeholder="Search or start new chat" />
+  </div>
+
+  <!-- List Section Title -->
+  <div class="list-section-title">
+    <h6>{{ searchNewContact ? 'Contacts' : 'Chat List' }}</h6>
+  </div>
+
+  <!-- Contacts List -->
+  <div class="contacts">
+    @if (chats().length && !searchNewContact) {
+      @for (chat of chats(); track chat.id) {
+        <div class="contact-item" (click)="chatClicked(chat)">
+          <div class="initial-avatar">
+            {{ (chat.name)?.charAt(0) | uppercase }}
+          </div>
+
+          <div class="contact-details">
+            <div class="contact-header">
+              <p class="contact-name">{{ chat.name }}</p>
+              <div class="time-badge-wrapper">
+                <p
+                  class="contact-time"
+                  [class.unread]="chat.unreadCount && chat.unreadCount > 0"
+                >
+                  {{ chat.lastMessageTime | date:'dd.MM.yy HH:mm' }}
+                </p>
+                @if (chat.unreadCount && chat.unreadCount > 0) {
+                  <small class="unread-msg-badge">{{ chat.unreadCount }}</small>
+                }
+              </div>
+            </div>
+            <span class="contact-message text-secondary">
+              @if (chat.lastMessage === 'Attachment') {
+                <i class="fas fa-image"></i>
+              }
+              {{ chat.lastMessage }}
+            </span>
+          </div>
+        </div>
+      }
+    } @else if (searchNewContact) {
+      @for (contact of contacts; track contact.id) {
+        <div class="contact-item" (click)="contactClicked(contact)">
+          <div class="initial-avatar">
+            {{ (contact.firstName)?.charAt(0) | uppercase }}
+          </div>
+
+          <div class="contact-details">
+            <div class="contact-header">
+              <p class="contact-name">{{ contact.firstName + ' ' + contact.lastName }}</p>
+              <p class="contact-time align-items-end">
+                @if (contact.online) {
+                  Online
+                } @else {
+                  Last seen {{ contact.lastSeen | date:'dd.MM.yy HH:mm' }}
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    } @else {
+      <small class="align-content-center">No chat yet...</small>
+    }
+  </div>
+
+</div>
