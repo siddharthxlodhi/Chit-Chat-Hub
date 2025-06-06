@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit, HostListener } from '@angular/core';
 import { ChatResponse } from "../../services/models/chat-response";
 import { ChatService } from "../../services/services/chat.service";
 import { ChatListComponent } from "../../components/chat-list/chat-list.component";
@@ -27,11 +27,12 @@ export class MainComponent implements OnInit, OnDestroy {
 
   chats: Array<ChatResponse> = [];
   selectedChat: ChatResponse | undefined;
-
   chatMessages: MessageResponse[] = [];
 
   private socketClient!: Client;
   private notificationSubscription: any;
+
+  isDesktopView = window.innerWidth >= 768;
 
   constructor(
     private chatService: ChatService,
@@ -51,6 +52,21 @@ export class MainComponent implements OnInit, OnDestroy {
     }
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isDesktopView = window.innerWidth >= 768;
+    // If resized to desktop view, keep chat list and chat window visible
+    // If resized to mobile view and a chat is selected, keep only chat window visible
+    if(this.isDesktopView) {
+      // On desktop, keep selected chat as is (both panels visible)
+    } else {
+      // On mobile, if no chat selected, show chat list panel
+      if(!this.selectedChat) {
+        // nothing special, chat list visible by *ngIf logic in template
+      }
     }
   }
 
@@ -85,6 +101,10 @@ export class MainComponent implements OnInit, OnDestroy {
     }
   }
 
+  backToChatList() {
+    this.selectedChat = undefined;
+  }
+
   private setMessagesToSeen() {
     this.messageService.setMessagesToSeen({
       'chat-id': this.selectedChat?.id as string
@@ -101,6 +121,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
     if (!userId || !token) return;
 
+    // const wsUrl = 'http://localhost:8080/ws';
     const wsUrl = 'https://chit-chat-hub-vzan.onrender.com/ws';
     const subUrl = `/user/${userId}/notification`;
 

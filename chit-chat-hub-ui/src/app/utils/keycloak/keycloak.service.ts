@@ -54,7 +54,7 @@ export class KeycloakService {
 
   logout() {
     // return this.keycloak?.logout({redirectUri: 'http://localhost:4200'})
-    return this.keycloak?.logout({redirectUri: 'https://keycloak-render-t785.onrender.com'})
+    return this.keycloak?.logout({redirectUri: 'https://chit-chat-hub-alpha.vercel.app'})
   }
 
   accountManagement() {
