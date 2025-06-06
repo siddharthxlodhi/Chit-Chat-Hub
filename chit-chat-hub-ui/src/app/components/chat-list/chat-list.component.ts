@@ -5,6 +5,7 @@ import {UserResponse} from "../../services/models/user-response";
 import {UserService} from "../../services/services/user.service";
 import {KeycloakService} from "../../utils/keycloak/keycloak.service";
 import {ChatService} from "../../services/services/chat.service";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-chat-list',
@@ -18,22 +19,31 @@ import {ChatService} from "../../services/services/chat.service";
   templateUrl: './chat-list.component.html',
   styleUrl: './chat-list.component.scss'
 })
-export class ChatListComponent implements OnInit{
+export class ChatListComponent implements OnInit {
 
-  loginUser:string|undefined;
+  loginUser: string | undefined;
 
   chats: InputSignal<ChatResponse[]> = input<ChatResponse[]>([]);
-  searchNewContact = false;
-  contacts: Array<UserResponse> = [];
   chatSelected = output<ChatResponse>();
+
+  searchNewContact = false;  //show chats if false
+  contacts: Array<UserResponse> = [];
+
 
   constructor(
     private userService: UserService,
     private keycloakService: KeycloakService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private toastrService: ToastrService
   ) {
+  }
 
+  logout() {
+    this.keycloakService.logout();
+  }
 
+  userProfile() {
+    this.keycloakService.accountManagement();
   }
 
 
@@ -46,9 +56,38 @@ export class ChatListComponent implements OnInit{
     })
   }
 
-
-  chatClicked(chat: ChatResponse) {
+  chatClicked(chat: ChatResponse) { //Emitting the selected chat to show in right panel
     this.chatSelected.emit(chat);
+  }
+
+
+  contactClicked(contact: UserResponse) {
+    this.chatService.createChat({
+      'sender-id': this.keycloakService.userId as string,
+      'receiver-id': contact.id as string
+    }).subscribe({
+      next: (res) => {
+        console.log("Chat created with:", contact.firstName); // Debug
+        this.toastrService.info("Created chat with " + contact.firstName);
+
+        const chat: ChatResponse = {
+          id: res.response,
+          name: contact.firstName + ' ' + contact.lastName,
+          recipientOnline: contact.online,
+          senderId: this.keycloakService.userId,
+          receiverId: contact.id,
+          createdDate: new Date().toString()
+        };
+
+        this.chats().unshift(chat);
+        this.searchNewContact = false;
+        this.chatSelected.emit(chat);
+      },
+      error: (err) => {
+        this.toastrService.error(err.error?.error || "Something went wrong");
+        this.searchNewContact = false;
+      }
+    });
   }
 
   wrapMessage(lastMessage: string | undefined): string {
@@ -59,40 +98,9 @@ export class ChatListComponent implements OnInit{
     return lastMessage?.substring(0, 17) + '...';
   }
 
-
-  contactClicked(contact: UserResponse) {
-    this.chatService.createChat({
-      'sender-id': this.keycloakService.userId as string,
-      'receiver-id': contact.id as string
-    }).subscribe({
-      next: (res) => {
-        const chat: ChatResponse = {
-          id: res.response,  //id of new chat
-          name: contact.firstName + ' ' + contact.lastName,
-          recipientOnline: contact.online,
-          senderId: this.keycloakService.userId,
-          receiverId: contact.id,
-          createdDate: new Date().toString()
-        };
-        this.chats().unshift(chat);
-        this.searchNewContact = false;
-        this.chatSelected.emit(chat);
-      }
-    });
-
-  }
-
-  logout() {
-    this.keycloakService.logout();
-  }
-
-  userProfile() {
-    this.keycloakService.accountManagement();
-  }
-
   protected readonly moveBy = moveBy;
 
   ngOnInit(): void {
-    this.loginUser=this.keycloakService.fullName;
+    this.loginUser = this.keycloakService.fullName;
   }
 }

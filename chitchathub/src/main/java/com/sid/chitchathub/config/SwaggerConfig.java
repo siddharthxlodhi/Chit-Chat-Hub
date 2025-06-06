@@ -14,8 +14,10 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
         in = SecuritySchemeIn.HEADER,      // 🔹 Token is passed in the HTTP header
         flows = @OAuthFlows(
                 password = @OAuthFlow(
-                        authorizationUrl = "http://localhost:9090/realms/chit-chat-hub/protocol/openid-connect/auth",
-                        tokenUrl = "http://localhost:9090/realms/chit-chat-hub/protocol/openid-connect/token"  //swagger will fetch token from there
+//                        authorizationUrl = "http://localhost:9090/realms/chit-chat-hub/protocol/openid-connect/auth",
+//                        tokenUrl = "http://localhost:9090/realms/chit-chat-hub/protocol/openid-connect/token"  //swagger will fetch token from there
+                        authorizationUrl = "https://keycloak-render-t785.onrender.com/realms/chit-chat-hub/protocol/openid-connect/auth",
+                        tokenUrl = "https://keycloak-render-t785.onrender.com/realms/chit-chat-hub/protocol/openid-connect/token"
                 )
         )
 )

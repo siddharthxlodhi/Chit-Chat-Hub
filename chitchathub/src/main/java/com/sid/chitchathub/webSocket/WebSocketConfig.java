@@ -2,6 +2,7 @@ package com.sid.chitchathub.webSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -23,10 +24,13 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    @Value("${allowed.origins}")
+    private  String  alloweOrigins;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:4200")  //Allowed regions
+                .setAllowedOrigins(alloweOrigins)  //Allowed regions
                 .withSockJS();  //over sock js
     }
 

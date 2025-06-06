@@ -16,7 +16,7 @@ public class MessageResponse {
     private MessageType type;
     private MessageState state;
     private LocalDateTime createdAt;
-    private byte[] media;
+    private String media;
     private String senderId;
     private String receiverId;
 }

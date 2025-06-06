@@ -1,5 +1,6 @@
 package com.sid.chitchathub.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,6 +18,10 @@ import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Configuration
 public class SecurityConfig {
+
+    @Value("${allowed.origins}")
+    private  String  alloweOrigins;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -63,7 +68,7 @@ CORS is a set of HTTP headers that the backend can send to the browser to tell i
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));   //only this will bew allowed
+        config.setAllowedOrigins(Collections.singletonList(alloweOrigins));   //only this will bew allowed
         config.setAllowedHeaders(Arrays.asList(
                 ORIGIN, CONTENT_TYPE, ACCEPT, AUTHORIZATION  // You're allowing JavaScript to read specific response headers
         ));

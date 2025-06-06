@@ -75,38 +75,28 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
     const file = this.extractFileFromInput(target);
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result?.toString();
-      if (result) {
-        const base64String = result.split(',')[1];  // extract base64 without prefix
-
-        // Upload to backend
-        this.messageService.uploadMedia({
-          "chat-id": this.chat.id as string,
-          body: {file}
-        }).subscribe({
-          next: () => {
-            const message: MessageResponse = {
-              senderId: this.getSenderId(),
-              receiverId: this.getReceiverId(),
-              content: 'Attachment',
-              type: 'IMAGE',
-              state: 'SENT',
-              media: [base64String],
-              createdAt: new Date().toISOString()
-            };
-            this.chatMessages.push(message);
-          },
-          error: (err) => {
-            console.error('Upload failed', err);
-          }
-        });
+    this.messageService.uploadMedia({
+      "chat-id": this.chat.id as string,
+      body: { file }
+    }).subscribe({
+      next: (res) => {
+        const message: MessageResponse = {
+          senderId: this.getSenderId(),
+          receiverId: this.getReceiverId(),
+          content: 'Attachment',
+          type: 'IMAGE',
+          state: 'SENT',
+          media: res.response, // You can update this with a real media URL if returned
+          createdAt: new Date().toISOString()
+        };
+        this.chatMessages.push(message);
+      },
+      error: (err) => {
+        console.error('Upload failed', err);
       }
-    };
-
-    reader.readAsDataURL(file);
+    });
   }
+
 
   private extractFileFromInput(target: EventTarget | null): File | null {
     const input = target as HTMLInputElement;

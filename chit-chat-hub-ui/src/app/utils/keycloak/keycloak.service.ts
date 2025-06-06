@@ -11,7 +11,8 @@ export class KeycloakService {
   get keycloak(): Keycloak {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
-        url: 'http://localhost:9090',
+        // url: 'http://localhost:9090',
+        url: 'https://keycloak-render-t785.onrender.com',
         realm: 'chit-chat-hub',   //realm
         clientId: 'chit-chat-hub-client'   //client
       });
@@ -52,7 +53,8 @@ export class KeycloakService {
   }
 
   logout() {
-    return this.keycloak?.logout({redirectUri: 'http://localhost:4200'})
+    // return this.keycloak?.logout({redirectUri: 'http://localhost:4200'})
+    return this.keycloak?.logout({redirectUri: 'https://keycloak-render-t785.onrender.com'})
   }
 
   accountManagement() {

@@ -20,7 +20,7 @@ public class MessageMapper {
                 .createdAt(message.getCreatedDate())
                 .senderId(message.getSenderID())
                 .receiverId(message.getReceiverID())
-                .media(FileUtils.readFileFromLocation(message.getMediaFilePath()))  //if media type is TEXT it will contain byte[0]
+                .media(message.getMediaFilePath())  //if media type is TEXT it will contain byte[0]
                 .build();
     }
 
