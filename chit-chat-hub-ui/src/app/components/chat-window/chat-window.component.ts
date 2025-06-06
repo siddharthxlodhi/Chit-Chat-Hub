@@ -4,20 +4,18 @@ import {
   Component,
   ElementRef,
   Input,
-  input,
-  InputSignal,
   OnInit,
   ViewChild
 } from '@angular/core';
-import {ChatResponse} from "../../services/models/chat-response";
-import {MessageResponse} from "../../services/models/message-response";
-import {MessageService} from "../../services/services/message.service";
-import {DatePipe, NgIf} from "@angular/common";
-import {KeycloakService} from "../../utils/keycloak/keycloak.service";
-import {PickerComponent} from "@ctrl/ngx-emoji-mart";
-import {FormsModule} from "@angular/forms";
-import {EmojiData} from "@ctrl/ngx-emoji-mart/ngx-emoji";
-import {MessageRequest} from "../../services/models/message-request";
+import { ChatResponse } from '../../services/models/chat-response';
+import { MessageResponse } from '../../services/models/message-response';
+import { MessageService } from '../../services/services/message.service';
+import { DatePipe, NgIf } from '@angular/common';
+import { KeycloakService } from '../../utils/keycloak/keycloak.service';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { FormsModule } from '@angular/forms';
+import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { MessageRequest } from '../../services/models/message-request';
 
 @Component({
   selector: 'app-chat-window',
@@ -44,9 +42,9 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
     private messageService: MessageService,
     private keyCloakService: KeycloakService,
     private cdr: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
+  ngOnInit(): void {}
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
@@ -55,21 +53,14 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
   private scrollToBottom(): void {
     try {
       this.scrollAnchor?.nativeElement?.scrollIntoView({ behavior: 'auto' });
-
     } catch (err) {
       console.warn('Scrolling failed', err);
     }
   }
 
-
   selfMessage(message: MessageResponse) {
-    return message.senderId == this.keyCloakService.userId;
+    return message.senderId === this.keyCloakService.userId;
   }
-
-  ngOnInit(): void {
-
-  }
-
 
   uploadMedia(target: EventTarget | null): void {
     const file = this.extractFileFromInput(target);
@@ -86,7 +77,7 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
           content: 'Attachment',
           type: 'IMAGE',
           state: 'SENT',
-          media: res.response, // You can update this with a real media URL if returned
+          media: res.response,
           createdAt: new Date().toISOString()
         };
         this.chatMessages.push(message);
@@ -97,14 +88,13 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
     });
   }
 
-
   private extractFileFromInput(target: EventTarget | null): File | null {
     const input = target as HTMLInputElement;
     return input?.files?.[0] ?? null;
   }
 
-  onSelectEmojis(emojiSelected: any) {
-    const emoji: EmojiData = emojiSelected.emoji;
+  onSelectEmojis(event: any): void {
+    const emoji: EmojiData = event.emoji;
     this.messageContent += emoji.native;
   }
 
@@ -126,10 +116,9 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
         receiverId: this.getReceiverId(),
         content: this.messageContent,
         type: 'TEXT'
-      }
-      this.messageService.savemessage({
-        body: msgReq
-      }).subscribe({
+      };
+
+      this.messageService.savemessage({ body: msgReq }).subscribe({
         next: () => {
           const message: MessageResponse = {
             senderId: this.getSenderId(),
@@ -143,35 +132,26 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
           this.chatMessages.push(message);
           this.messageContent = '';
           this.showEmoji = false;
-
         }
-      })
+      });
     }
   }
 
   private setMessagesToSeen() {
     this.messageService.setMessagesToSeen({
       "chat-id": this.chat.id as string
-    }).subscribe({
-      next: () => {
-      }
-    })
+    }).subscribe();
   }
 
   private getSenderId() {
-    if (this.chat.senderId === this.keyCloakService.userId) {
-      return this.chat.senderId as string;
-    }
-    return this.chat.receiverId;
+    return this.chat.senderId === this.keyCloakService.userId
+      ? this.chat.senderId as string
+      : this.chat.receiverId;
   }
 
   private getReceiverId() {
-    if (this.chat.senderId === this.keyCloakService.userId) {
-      return this.chat.receiverId as string;
-    }
-    return this.chat.senderId;
+    return this.chat.senderId === this.keyCloakService.userId
+      ? this.chat.receiverId as string
+      : this.chat.senderId;
   }
-
-
 }
-

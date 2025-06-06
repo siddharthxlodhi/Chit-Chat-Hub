@@ -1,6 +1,5 @@
 <!-- Chat Header -->
 <div class="chat-header-left flex items-center justify-between w-full px-4 py-2 bg-white shadow-sm">
-  <!-- Left side: user icon and chat title -->
   <div class="flex items-center space-x-2">
     <i class="fas fa-user text-gray-700"></i>
     <div class="chat-title-section">
@@ -20,10 +19,9 @@
     </div>
   </div>
 
-  <!-- Right side: logo + text -->
   <div class="flex items-center space-x-3">
     <div class="logo-wrapper">
-      <img src="logo1.png" alt="Logo" class="logo-image"/>
+      <img src="logo1.png" alt="Logo" class="logo-image" />
       <span class="embedded-text">CHIT CHAT HUB</span>
     </div>
   </div>
@@ -42,14 +40,12 @@
           @if (message.type === 'TEXT') {
             <p>{{ message.content }}</p>
           } @else if (message.media) {
-            <img width="240" class="cursor-pointer rounded shadow" [src]=message.media alt="Image"/>
+            <img width="240" class="cursor-pointer rounded shadow" [src]="message.media" alt="Image" />
           }
           <div class="message-meta">
             <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
             @if (message.state === 'SENT') {
-              <span class="icon-wrapper">
-                <i class="fas fa-check"></i>
-              </span>
+              <span class="icon-wrapper"><i class="fas fa-check"></i></span>
             } @else {
               <span class="icon-wrapper">
                 <i class="fas fa-check seen"></i>
@@ -64,7 +60,7 @@
           @if (message.type === 'TEXT') {
             <p>{{ message.content }}</p>
           } @else if (message.media) {
-            <img width="240" class="cursor-pointer rounded shadow" [src]=message.media alt="Image"/>
+            <img width="240" class="cursor-pointer rounded shadow" [src]="message.media" alt="Image" />
           }
           <div class="message-meta">
             <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
@@ -78,13 +74,10 @@
 
 <!-- Input Section -->
 <div class="chat-input relative flex items-center p-3 bg-gradient-to-t from-gray-200 to-white border-t border-gray-300">
-
   <!-- Paperclip Icon -->
-  <label for="fileUpload" class="icon-button" style="cursor: pointer; margin-right: 10px;">
+  <label for="fileUpload" class="icon-button mr-3 cursor-pointer">
     <i class="fas fa-paperclip"></i>
   </label>
-
-  <!-- Hidden File Input -->
   <input
     type="file"
     id="fileUpload"
@@ -93,24 +86,26 @@
     (change)="uploadMedia($event.target)"
   />
 
-  <!-- Emoji Icon -->
-  <button
-    type="button"
-    class="emoji-button icon-button"
-    (click)="showEmoji = !showEmoji"
-    aria-label="Toggle emoji picker"
-  >
-    <i class="fa-regular fa-face-smile"></i>
+  <!-- Emoji Icon + Panel -->
+  <div class="relative">
+    <button
+      type="button"
+      class="emoji-button icon-button"
+      (click)="showEmoji = !showEmoji"
+      aria-label="Toggle emoji picker"
+    >
+      <i class="fa-regular fa-face-smile"></i>
+    </button>
     <emoji-mart
       *ngIf="showEmoji"
       [set]="'google'"
       title="Pick your emoji.."
-      class="emojis-panel absolute bottom-full right-0 mb-2 z-50"
+      class="emojis-panel"
       (emojiClick)="onSelectEmojis($event)"
     ></emoji-mart>
-  </button>
+  </div>
 
-  <!-- Input Field -->
+  <!-- Text Input -->
   <input
     [(ngModel)]="messageContent"
     (keydown)="KeyDown($event)"
@@ -120,7 +115,7 @@
     placeholder="Type a message..."
   />
 
-  <!-- Send Icon -->
+  <!-- Send Button -->
   <i
     *ngIf="messageContent"
     class="fas fa-paper-plane ml-3 cursor-pointer text-blue-600 hover:text-blue-800"

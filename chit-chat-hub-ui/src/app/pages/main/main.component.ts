@@ -91,7 +91,7 @@ export class MainComponent implements OnInit, OnDestroy {
   chatSelectedMethod(chatResponse: ChatResponse) {
     this.selectedChat = chatResponse;
     this.getAllChatMessages(chatResponse.id as string);
-    this.setMessagesToSeen();
+    // this.setMessagesToSeen();
 
     if (this.selectedChat) {
       this.selectedChat = { ...this.selectedChat, unreadCount: 0 };
