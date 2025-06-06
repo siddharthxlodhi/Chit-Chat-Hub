@@ -1,5 +1,6 @@
 package com.sid.chitchathub.chat;
 
+import com.sid.chitchathub.handler.ChatException;
 import com.sid.chitchathub.user.User;
 import com.sid.chitchathub.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,14 +30,14 @@ public class ChatService {
     //This will create a chat if not already exist ,otherwise return the existing
     public String createChat(String senderId, String receiverId) {
         Optional<Chat> existingChat = chatRepository.findChatBySenderIdAndReceiverId(senderId, receiverId);
-        if (existingChat.isPresent()) {
-            return existingChat.get().getId();
+        Optional<Chat> existingChat2 = chatRepository.findChatBySenderIdAndReceiverId(receiverId, senderId);
+        if (existingChat.isPresent() || existingChat2.isPresent()) {
+            throw new ChatException("Chat already exist");
         }
         User sender = userRepository.findByPublicId(senderId).orElseThrow(() -> new EntityNotFoundException("User with" + senderId + " not found"));
         User receiver = userRepository.findByPublicId(receiverId).orElseThrow(() -> new EntityNotFoundException("User with" + receiverId + " not found"));
         Chat chat = Chat.builder().sender(sender).receiver(receiver).build();
         return chatRepository.save(chat).getId();
-
     }
 
 

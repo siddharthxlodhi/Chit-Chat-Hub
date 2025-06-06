@@ -22,7 +22,7 @@
   <!-- Right side: logo + text -->
   <div class="flex items-center space-x-3">
     <div class="logo-wrapper">
-      <img src="logo1.png" alt="Logo" class="logo-image" />
+      <img src="logo1.png" alt="Logo" class="logo-image"/>
       <span class="embedded-text">CHIT CHAT HUB</span>
     </div>
 
@@ -31,9 +31,6 @@
 </div>
 
 
-
-
-<!-- Chat body -->
 <!-- Chat body -->
 <!-- Chat body -->
 <div class="chat-body">
@@ -46,17 +43,16 @@
       @if (selfMessage(message)) {
         <div class="chat-message-out">
           @if (message.type === 'TEXT') {
-            <p >{{ message.content }}</p>
-          } @else if (message.media && message.media.length > 0) {
+            <p>{{ message.content }}</p>
+          } @else if (message.media) {
             <img
               width="240"
               class="cursor-pointer rounded shadow"
-              [src]="'data:image/jpg;base64,' + message.media"
+              [src]=message.media
               alt="Image"
             />
 
           }
-
 
           <div class="message-meta">
             <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
@@ -79,11 +75,11 @@
 
           @if (message.type === 'TEXT') {
             <p>{{ message.content }}</p>
-          } @else if (message.media && message.media.length > 0) {
+          } @else if (message.media) {
             <img
               width="240"
               class="cursor-pointer rounded shadow"
-              [src]="'data:image/jpg;base64,' + message.media"
+              [src]=message.media
               alt="Image"
             />
 

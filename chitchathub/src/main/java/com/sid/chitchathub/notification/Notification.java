@@ -17,7 +17,7 @@ public class Notification {
     private String chatName;
     private MessageType messageType;
     private NotificationType type;
-    private byte[] media;
+    private String media;
 
 
 }

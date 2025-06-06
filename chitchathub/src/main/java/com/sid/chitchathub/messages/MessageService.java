@@ -3,7 +3,8 @@ package com.sid.chitchathub.messages;
 import com.sid.chitchathub.chat.Chat;
 import com.sid.chitchathub.chat.ChatRepository;
 import com.sid.chitchathub.file.FileStorageService;
-import com.sid.chitchathub.file.FileUtils;
+
+import com.sid.chitchathub.media.SupabaseStorageService;
 import com.sid.chitchathub.notification.Notification;
 import com.sid.chitchathub.notification.NotificationService;
 import com.sid.chitchathub.notification.NotificationType;
@@ -31,6 +32,7 @@ public class MessageService {
     private final ChatRepository chatRepository;
     private final FileStorageService fileService;
     private final NotificationService notificationService;
+    private final SupabaseStorageService storageService;
 
     public void saveMessage(MessageRequest messageRequest) {
         Chat chat = chatRepository.findById(messageRequest.getChatId())
@@ -98,21 +100,23 @@ public class MessageService {
     }
 
     @Transactional
-    public void uploadMediaMessage(String chatId, MultipartFile file, Authentication authentication) {
+    public String uploadMediaMessage(String chatId, MultipartFile file, Authentication authentication) {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Chat not found"));
 
         final String senderId = authentication.getName();
         final String recipientId = geRecipientId(chat, authentication);
 
-        final String filePath = fileService.saveFile(senderId, file);
+//        final String filePath = fileService.saveFile(senderId, file);
+
+        String imageUrl = storageService.uploadFile(file).block();
         Message message = Message.builder()
                 .chat(chat)
                 .senderID(senderId)
                 .receiverID(recipientId)
                 .type(IMAGE)
                 .state(SENT)
-                .mediaFilePath(filePath)
+                .mediaFilePath(imageUrl)
                 .build();
         messageRepository.save(message);
 
@@ -124,12 +128,12 @@ public class MessageService {
                 .senderId(senderId)
                 .receiverId(recipientId)
                 .type(NotificationType.IMAGE)
-                .media(FileUtils.readFileFromLocation(filePath))
+                .media(imageUrl)
                 .build();
 
         notificationService.sendNotification(recipientId, notification);
 
-
+return imageUrl;
     }
 
 

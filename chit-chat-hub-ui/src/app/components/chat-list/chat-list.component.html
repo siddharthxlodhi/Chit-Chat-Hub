@@ -16,7 +16,9 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
         <li><a class="dropdown-item" (click)="userProfile()">Profile</a></li>
-        <li><hr class="dropdown-divider"></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
         <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
       </ul>
     </div>
@@ -41,7 +43,7 @@
 
   <!-- Search -->
   <div class="search">
-    <input type="text" placeholder="Search or start new chat" />
+    <input type="text" placeholder="Search or start new chat"/>
   </div>
 
   <!-- List Section Title -->
@@ -82,6 +84,7 @@
           </div>
         </div>
       }
+
     } @else if (searchNewContact) {
       @for (contact of contacts; track contact.id) {
         <div class="contact-item" (click)="contactClicked(contact)">

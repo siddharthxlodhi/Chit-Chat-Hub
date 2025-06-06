@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: username
-    password: password
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,7 +18,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9090/realms/chit-chat-hub
+          issuer-uri: ${ISSUER_URI}
 
   servlet:
     multipart:
@@ -34,3 +34,16 @@ application:
 
 springdoc:
   default-produces-media-type: application/json
+
+supabase:
+  url: ${SUPABASE_URL}
+  Api-key: ${SUPABASE_API_KEY}
+  bucket: ${SUPABASE_BUCKET}
+
+allowed:
+  origins: ${ALLOWED_ORIGINS}
+
+
+server:
+  address: 0.0.0.0  # <-- ADD THIS LINE
+  port: 8080        # <-- OPTIONAL, but good to include explicitly

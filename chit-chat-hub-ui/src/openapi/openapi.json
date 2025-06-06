@@ -126,7 +126,17 @@
         "responses": {
 
           "201": {
-            "description": "Created"
+            "description": "Created",
+
+            "content": {
+
+              "application/json": {
+
+                "schema": {
+                  "$ref": "#/components/schemas/StringResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -414,8 +424,7 @@
           },
 
           "media": {
-            "type": "string",
-            "format": "byte"
+            "type": "string"
           },
 
           "senderId": {

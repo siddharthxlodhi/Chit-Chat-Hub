@@ -18,6 +18,7 @@ import { savemessage } from '../fn/message/savemessage';
 import { Savemessage$Params } from '../fn/message/savemessage';
 import { setMessagesToSeen } from '../fn/message/set-messages-to-seen';
 import { SetMessagesToSeen$Params } from '../fn/message/set-messages-to-seen';
+import { StringResponse } from '../models/string-response';
 import { uploadMedia } from '../fn/message/upload-media';
 import { UploadMedia$Params } from '../fn/message/upload-media';
 
@@ -76,7 +77,6 @@ export class MessageService extends BaseService {
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
-  
 
   /** Path part for operation `uploadMedia()` */
   static readonly UploadMediaPath = '/api/v1/messages/upload-media';
@@ -87,7 +87,7 @@ export class MessageService extends BaseService {
    *
    * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
-  uploadMedia$Response(params: UploadMedia$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  uploadMedia$Response(params: UploadMedia$Params, context?: HttpContext): Observable<StrictHttpResponse<StringResponse>> {
     return uploadMedia(this.http, this.rootUrl, params, context);
   }
 
@@ -97,9 +97,9 @@ export class MessageService extends BaseService {
    *
    * This method sends `multipart/form-data` and handles request body of type `multipart/form-data`.
    */
-  uploadMedia(params: UploadMedia$Params, context?: HttpContext): Observable<void> {
+  uploadMedia(params: UploadMedia$Params, context?: HttpContext): Observable<StringResponse> {
     return this.uploadMedia$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+      map((r: StrictHttpResponse<StringResponse>): StringResponse => r.body)
     );
   }
 
