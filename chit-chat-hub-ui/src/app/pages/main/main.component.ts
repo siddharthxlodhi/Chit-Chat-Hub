@@ -99,7 +99,8 @@ export class MainComponent implements OnInit, OnDestroy {
 
   private initWebSocket() {
     if (this.keyCloakService.keycloak.tokenParsed?.sub) {
-      let ws = new SockJS('http://localhost:8080/ws');
+      // let ws = new SockJS('http://localhost:8080/ws');
+      let ws = new SockJS('https://chit-chat-hub-vzan.onrender.com/ws');
       this.socketClient = Stomp.over(ws);
       const subUrl = `/user/${this.keyCloakService.keycloak.tokenParsed?.sub}/notification`;
       this.socketClient.connect({'Authorization': 'Bearer ' + this.keyCloakService.keycloak.token},
