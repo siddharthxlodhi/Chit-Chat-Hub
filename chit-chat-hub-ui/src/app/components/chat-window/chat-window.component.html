@@ -1,6 +1,6 @@
 <!-- Chat Header -->
 <div class="chat-header-left flex items-center justify-between w-full px-4 py-2 bg-white shadow-sm">
-  <!-- Left side: existing user icon and chat title -->
+  <!-- Left side: user icon and chat title -->
   <div class="flex items-center space-x-2">
     <i class="fas fa-user text-gray-700"></i>
     <div class="chat-title-section">
@@ -42,13 +42,14 @@
           @if (message.type === 'TEXT') {
             <p>{{ message.content }}</p>
           } @else if (message.media) {
-            <img width="240" class="cursor-pointer rounded shadow" [src]=message.media alt="Image" />
+            <img width="240" class="cursor-pointer rounded shadow" [src]=message.media alt="Image"/>
           }
-
           <div class="message-meta">
             <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
             @if (message.state === 'SENT') {
-              <span class="icon-wrapper"><i class="fas fa-check"></i></span>
+              <span class="icon-wrapper">
+                <i class="fas fa-check"></i>
+              </span>
             } @else {
               <span class="icon-wrapper">
                 <i class="fas fa-check seen"></i>
@@ -63,7 +64,7 @@
           @if (message.type === 'TEXT') {
             <p>{{ message.content }}</p>
           } @else if (message.media) {
-            <img width="240" class="cursor-pointer rounded shadow" [src]=message.media alt="Image" />
+            <img width="240" class="cursor-pointer rounded shadow" [src]=message.media alt="Image"/>
           }
           <div class="message-meta">
             <small class="text-black-70">{{ message.createdAt | date: 'HH.mm' }}</small>
@@ -71,44 +72,58 @@
         </div>
       }
     }
-
     <div #scrollAnchor></div>
   </div>
 </div>
 
-<!-- Chat Input -->
-<div class="chat-input">
-  <!-- File Upload -->
-  <label for="fileUpload" style="cursor: pointer; margin-right: 10px;">
+<!-- Input Section -->
+<div class="chat-input relative flex items-center p-3 bg-gradient-to-t from-gray-200 to-white border-t border-gray-300">
+
+  <!-- Paperclip Icon -->
+  <label for="fileUpload" class="icon-button" style="cursor: pointer; margin-right: 10px;">
     <i class="fas fa-paperclip"></i>
   </label>
-  <input type="file" id="fileUpload" hidden accept=".jpg, .jpeg, .png, .svg, .mp3" (change)="uploadMedia($event.target)" />
 
-  <!-- Emoji Picker Toggle -->
-  <div class="emoji-wrapper relative">
-    <i class="fa-regular fa-face-smile cursor-pointer" (click)="showEmoji = !showEmoji"></i>
-    @if (showEmoji) {
-      <div class="emoji-container">
-        <emoji-mart
-          [set]="'google'"
-          title="Pick your emoji..."
-          (emojiClick)="onSelectEmojis($event)">
-        </emoji-mart>
-      </div>
-    }
-  </div>
+  <!-- Hidden File Input -->
+  <input
+    type="file"
+    id="fileUpload"
+    hidden
+    accept=".jpg, .jpeg, .png, .svg, .mp3"
+    (change)="uploadMedia($event.target)"
+  />
 
-  <!-- Message Input -->
+  <!-- Emoji Icon -->
+  <button
+    type="button"
+    class="emoji-button icon-button"
+    (click)="showEmoji = !showEmoji"
+    aria-label="Toggle emoji picker"
+  >
+    <i class="fa-regular fa-face-smile"></i>
+    <emoji-mart
+      *ngIf="showEmoji"
+      [set]="'google'"
+      title="Pick your emoji.."
+      class="emojis-panel absolute bottom-full right-0 mb-2 z-50"
+      (emojiClick)="onSelectEmojis($event)"
+    ></emoji-mart>
+  </button>
+
+  <!-- Input Field -->
   <input
     [(ngModel)]="messageContent"
     (keydown)="KeyDown($event)"
     (click)="onClick()"
-    class="chat-input-field"
+    class="chat-input-field flex-grow ml-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
     type="text"
-    placeholder="Type a message...">
+    placeholder="Type a message..."
+  />
 
   <!-- Send Icon -->
-  @if (messageContent) {
-    <i class="fas fa-paper-plane cursor-pointer" (click)="sendMessage()"></i>
-  }
+  <i
+    *ngIf="messageContent"
+    class="fas fa-paper-plane ml-3 cursor-pointer text-blue-600 hover:text-blue-800"
+    (click)="sendMessage()"
+  ></i>
 </div>

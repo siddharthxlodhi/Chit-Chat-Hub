@@ -4,14 +4,26 @@
   height: 100%;
   max-height: 100vh;
   font-family: sans-serif;
+  position: relative; /* for absolute positioned emojis panel inside */
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #fcfefe;
+  border-bottom: 1px solid #ccc;
 }
 
 .chat-header-left {
   background-color: #fcfefe;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px;
+  gap: 10px; /* space between icon and title */
+  font-size: 24px; /* size of icon */
+  color: #555; /* icon color */
+  padding-left: 10px; /* push from left panel */
 }
 
 .chat-title-section {
@@ -24,19 +36,41 @@
   color: #555;
 }
 
+.chat-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.chat-header-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.chat-body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 .chat-body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+
   flex: 1;
   overflow-y: auto;
   background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
   padding: 15px;
-  border-radius: 12px;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15), inset 0 -2px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  margin: 10px;
-}
 
-.chat-body::-webkit-scrollbar {
-  display: none;
+  border-radius: 12px;
+
+  /* Inset shadow to look sunken in */
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.1);
+
+  /* Optional: soft border to contain the body */
+  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  margin: 10px; /* spacing from wrapper for better visibility */
 }
 
 .chat-scroll {
@@ -45,45 +79,86 @@
   gap: 10px;
 }
 
+.chat-date,
+.chat-info {
+  align-self: center;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.chat-date {
+  background-color: #ddecf2;
+  color: #333;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 6px 14px;
+  border-radius: 999px; /* pill shape */
+  align-self: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.chat-info {
+  background-color: #fcf4cb;
+}
+
+/* Message bubbles: rectangular with corner rounding, less padding, and proper border radius */
 .chat-message-in,
 .chat-message-out {
   max-width: 70%;
   padding: 6px 12px;
   font-size: 14px;
+  line-height: 1.3;
   word-wrap: break-word;
   white-space: pre-wrap;
-  position: relative;
+  position: relative; /* For absolute positioned meta */
 }
 
 .chat-message-in {
-  background-color: #fff;
+  background-color: #ffffff;
   align-self: flex-start;
-  border-radius: 12px 12px 12px 0;
+  border-radius: 12px 12px 12px 0; /* Rounded except bottom-left */
 }
 
 .chat-message-out {
   background-color: #e2f7cb;
   align-self: flex-end;
-  border-radius: 12px 12px 0 12px;
+  margin-left: auto;
+  border-radius: 12px 12px 0 12px; /* Rounded except bottom-right */
 }
 
+.sender-name {
+  color: rgba(53, 53, 54, 0.99); /* lighter gray */
+  font-weight: bold;
+  font-size: 0.9rem; /* ~14.4px */
+  margin-bottom: 4px;
+}
+
+
+/* Images inside messages */
 .chat-message-in img,
 .chat-message-out img {
   display: block;
   max-width: 100%;
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* space for time/checks inside bubble */
 }
 
+/* Default message-meta for text messages and others */
 .message-meta {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 1px;
+  gap: 6px; /* gap between time and icons */
+  margin-top: 1px; /* bring time closer */
   font-size: 13px;
   color: #555;
 }
 
+/* Special positioning for message-meta inside image messages */
+/* Incoming message: time & checks bottom-left inside bubble */
 .chat-message-in img + .message-meta {
   position: absolute;
   bottom: 6px;
@@ -91,11 +166,19 @@
   margin-top: 0;
 }
 
+/* Outgoing message: time & checks bottom-right inside bubble */
 .chat-message-out img + .message-meta {
   position: absolute;
   bottom: 6px;
   right: 8px;
   margin-top: 0;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #777;
+  text-align: right;
+  margin-top: 5px;
 }
 
 .chat-input {
@@ -104,6 +187,7 @@
   padding: 10px 15px;
   background-image: linear-gradient(to top, #dfe9f3 0%, white 100%);
   border-top: 1px solid #ccc;
+  position: relative; /* so emojis panel can be absolute here */
 }
 
 .chat-input-field {
@@ -114,34 +198,23 @@
   margin: 0 10px;
 }
 
-.online-status-wrapper,
-.offline-status-wrapper {
+.online-status-wrapper {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.online-dot,
-.offline-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  gap: 6px; /* adds space between dot and text */
 }
 
 .online-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
   background-color: green;
   animation: pulse 1.5s infinite ease-in-out;
 }
 
-.offline-dot {
-  background-color: gray;
-  opacity: 0.6;
-}
-
-.online-text,
-.offline-text {
+.online-text {
   font-size: 13px;
-  color: #000;
+  color: #000000; /* darker green */
 }
 
 @keyframes pulse {
@@ -155,6 +228,25 @@
   }
 }
 
+.offline-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* space between dot and text */
+}
+
+.offline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: gray;
+  opacity: 0.6;
+}
+
+.offline-text {
+  font-size: 13px;
+  color: #000000;
+}
+
 i.seen {
   color: #53bdeb;
 }
@@ -165,59 +257,39 @@ i.ml-neg {
 
 .icon-wrapper {
   display: inline-flex;
-  gap: 3px;
+  gap: 3px; /* gap between the two checkmarks */
 }
 
-.emoji-wrapper {
-  position: relative;
+.seen {
+  color: #1a73e8;
 }
 
-.emoji-container {
+.emojis-panel {
   position: absolute;
-  bottom: 120%;             // Place it above the icon
-  left: 0;                  // Align left edge of panel with emoji icon
+  bottom: 45px;
+  right: -290px; /* panel width + some margin */
   z-index: 10;
-  width: 300px;
-  max-height: 300px;
-  overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   background: white;
-
-  @media (max-width: 768px) {
-    width: 240px;
-    max-height: 220px;
-  }
-
-  @media (max-width: 480px) {
-    width: 200px;
-    max-height: 180px;
-  }
+  width: 280px;
+  max-height: 320px;
+  overflow-y: auto;
 }
 
 
-
-emoji-mart {
-  font-size: 14px;
-
-  @media (max-width: 768px) {
-    font-size: 12px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 10px;
-  }
-}
+/* Logo styling */
 
 .logo-wrapper {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 6px; /* reduced from 12px to 6px */
   cursor: pointer;
 }
 
 .logo-image {
   height: 50px;
+  width: auto;
   object-fit: contain;
   transition: transform 0.3s ease-in-out;
 }
@@ -226,15 +298,20 @@ emoji-mart {
   font-weight: 700;
   font-size: 24px;
   color: #0092c7;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1), -1px -1px 1px rgba(255, 255, 255, 0.8);
+  text-shadow:
+    1px 1px 2px rgba(0, 0, 0, 0.1),
+    -1px -1px 1px rgba(255, 255, 255, 0.8);
   transition: transform 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
 }
 
+/* Hover effect for both logo and text */
 .logo-wrapper:hover .logo-image {
   transform: scale(1.1);
 }
 
 .logo-wrapper:hover .embedded-text {
   transform: scale(1.05);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15), -2px -2px 2px rgba(255, 255, 255, 0.9);
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.15),
+    -2px -2px 2px rgba(255, 255, 255, 0.9);
 }
