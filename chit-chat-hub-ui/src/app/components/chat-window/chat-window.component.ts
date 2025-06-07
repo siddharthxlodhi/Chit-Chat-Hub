@@ -1,10 +1,13 @@
 import {
   AfterViewChecked,
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
+  OnChanges,
   OnInit,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { ChatResponse } from '../../services/models/chat-response';
@@ -29,11 +32,12 @@ import { MessageRequest } from '../../services/models/message-request';
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.scss'
 })
-export class ChatWindowComponent implements OnInit, AfterViewChecked {
+export class ChatWindowComponent implements OnInit, AfterViewInit, AfterViewChecked, OnChanges {
 
   showEmoji = false;
-  @Input() chat!: ChatResponse;
   messageContent = '';
+
+  @Input() chat!: ChatResponse;
   @Input() chatMessages!: MessageResponse[];
 
   @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
@@ -46,13 +50,23 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {}
 
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
   ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['chat'] && changes['chat'].currentValue) {
+      setTimeout(() => this.scrollToBottom(), 0);
+    }
+  }
+
   private scrollToBottom(): void {
     try {
-      this.scrollAnchor?.nativeElement?.scrollIntoView({ behavior: 'auto' });
+      this.scrollAnchor?.nativeElement?.scrollIntoView({ behavior: 'smooth' });
     } catch (err) {
       console.warn('Scrolling failed', err);
     }
@@ -81,6 +95,7 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
           createdAt: new Date().toISOString()
         };
         this.chatMessages.push(message);
+        setTimeout(() => this.scrollToBottom(), 0);
       },
       error: (err) => {
         console.error('Upload failed', err);
@@ -109,7 +124,7 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
   }
 
   sendMessage() {
-    if (this.messageContent) {
+    if (this.messageContent.trim()) {
       const msgReq: MessageRequest = {
         chatId: this.chat.id,
         senderId: this.getSenderId(),
@@ -126,12 +141,13 @@ export class ChatWindowComponent implements OnInit, AfterViewChecked {
             content: this.messageContent,
             type: 'TEXT',
             state: 'SENT',
-            createdAt: new Date().toString()
+            createdAt: new Date().toISOString()
           };
           this.chat.lastMessage = this.messageContent;
           this.chatMessages.push(message);
           this.messageContent = '';
           this.showEmoji = false;
+          setTimeout(() => this.scrollToBottom(), 0);
         }
       });
     }
