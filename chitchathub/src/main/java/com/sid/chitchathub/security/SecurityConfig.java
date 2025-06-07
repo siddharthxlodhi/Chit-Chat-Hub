@@ -16,11 +16,12 @@ import java.util.Collections;
 
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Configuration
 public class SecurityConfig {
 
     @Value("${allowed.origins}")
-    private  String  alloweOrigins;
+    private String alloweOrigins;
 
 
     @Bean
@@ -41,7 +42,8 @@ public class SecurityConfig {
                                         "/webjars/**",
                                         "/swagger-ui.html",
                                         "/ws/**",
-                                        "/free/**")
+                                        "/free/**",
+                                        "/api/ping")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -74,7 +76,7 @@ CORS is a set of HTTP headers that the backend can send to the browser to tell i
         ));
         config.setAllowedMethods(
                 Arrays.asList(
-                        "GET", "POST", "PUT", "DELETE", "OPTIONS","PATCH"
+                        "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
                 )
         );
         source.registerCorsConfiguration("/**", config);  //for all resources /**
