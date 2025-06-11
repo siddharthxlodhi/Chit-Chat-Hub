@@ -19,6 +19,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${ISSUER_URI}
+  jackson:
+    time-zone: Asia/Kolkata
 
   servlet:
     multipart:
